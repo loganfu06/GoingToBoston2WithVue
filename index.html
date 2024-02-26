@@ -1,52 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boston Dice Game</title>
-    <link rel="stylesheet" href="main.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Going to Boston</title>
 </head>
+
 <body>
-    <div class="hidden total"> Total Rounds</div>
-    <br>
-    <div class="rounds"> Total Rounds: </div>
-
-    <input type="text" id="round_selector v-show" class="round_selector" maxlength="3" size="3" />
-    <button type="button" class="button_check">start the game</button> 
-    <br/><br/>
-    <div class = "hidden round">
-        <h1> Round: </h1>
+    <div id="app">
+        <h1> Going to Boston </h1>
+        <button v-on:click="restartGame">Restart game</button><br><br>
+        <div v-if="gameStart == false">
+            <p>Choose how many rounds you want to play</p>
+            <input type="number" maxlength="3" size="10" min="1" v-model="totalRounds">
+            <button v-on:click="startGame">Start Game</button>
+        </div>
+        <div v-if="gameStart == true">
+            <h2>Total number of rounds: {{totalRounds}}</h2>
+            <div v-if="currentRound != 0">
+                <h2>Current round: {{currentRound}}</h2>
+            </div>
+            <h2></h2>
+            <div v-if="currentRound == 0">
+                <p>Roll dice to see who goes first</p>
+                <div v-if="p1InitialDice > 0">
+                    <p>Player 1 Rolled: {{p1InitialDice}}</p>
+                </div>
+                <div v-if="p2InitialDice > 0">
+                    <p>Player 2 Rolled: {{p2InitialDice}}</p>
+                </div>
+                <div v-if="p1InitialDice == 0">
+                    <button>Player 1 Roll the Dice</button>
+                </div>
+                <br>
+                <div v-if="p2InitialDice == 0">
+                    <button>Player 2 Roll the Dice</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <h2>Player 1</h2>
-    <div class = "player1"> 
-        <button type="button" class="hidden dice_turn_Player1" id="v-show"> Roll Dice</button>
-        <button type="button" class="hidden dice_button_Player1" id="v-show"> Roll Dice</button>
-        <div class = "totalPlayer1"></div>
-        <button type="button" class="hidden end_Turn_Player1" id="v-show"> end turn</button>
-        <br>
-        <div class="hidden turn_Player1_1Boolean"></div>
-        <div class="hidden dice_Player1Boolean"></div>
+    <!-- <div class="start_text">
+    <p class="round_text"> Type in how many rounds you want to play </p>
+    <input type="number" class="round_selector" maxlength="3" size="10" min="1">
+    <button type="button" class="start">Start game</button><br><br>
     </div>
-
-    <h2>Player 2</h2>
-    <div class = "player2">
-        <button type="button" class="hidden dice_turn_Player2" id="v-show"> Roll Dice</button>
-        <button type="button" class="hidden dice_button_Player2" id="v-show"> Roll Dice</button>
-        <div class = "totalPlayer1"></div>
-        <button type="button" class="hidden end_Turn_Player2" id="v-show"> end turn</button>
-        <br>
-        <div class="hidden turn_Player2_1Boolean"></div>
-        <div class="hidden dice_Player2Boolean"></div>
+    <div class="first_pick hidden">
+      <p> Roll the dice to see who goes first! Higher number goes first. If there is a tie, reroll. </p>
+      <button type="button" class="first_dice"> Roll the dice! </button>
+      <p class="p1_dice">Player 1 Dice: </p>
+      <p class="p2_dice">Player 2 Dice: </p>
+      <p class="goes_first"></p>
+      <button type="button" class="accept hidden">Start playing!</button>
     </div>
-    <br>
-    <button type="button" class="hidden continue" id="v-show"> continue</button>
-    <div class="turn"></div>
-    <br>
-    <br>
-    <button type="button" class="hidden restart_button" id="v-show">Restart Game</button>
-    <div class="scoreboard"></div>
-    <div class="gameWon"></div>
-    <script src="dice.js"></script>
+    <div class="game hidden"> 
+      <h3>Total Score</h3>
+      <p class="p1_score">Player 1 rounds won: </p>
+      <p class="p2_score">Player 2 rounds won: </p>
+      <br>
+      <h3 class="round_num">Current round: </h3>
+      <p class="p1_current">Player 1 current round score: </p>
+      <p class="p2_current">Player 2 current round score: </p>
+      <br>
+      <h3 class="whose_turn"></h3>
+      <button class="roll_dice">Roll dice!</button>
+      <p class="current_dice"> You rolled: </p>
+      <p class="current_score"> Current round score: </p>
+      <br>
+      <button class="next_player hidden">Next player's turn</button>
+      <p class="roundWinner hidden"></p>
+      <button class="next_round hidden">End round</button>
+    </div>
+    <h3 class="finalWinner hidden"></h3> -->
+    <script type="module" src="main.js"></script>
 </body>
 </html>
