@@ -2,9 +2,9 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Going to Boston</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Going to Boston</title>
 </head>
 
 <body>
@@ -17,62 +17,164 @@
             <button v-on:click="startGame">Start Game</button>
         </div>
         <div v-if="gameStart == true">
-            <h2>Total number of rounds: {{totalRounds}}</h2>
-            <div v-if="currentRound != 0">
+            <div v-if="currentRound <= totalRounds">
+                <h2>Total number of rounds: {{totalRounds}}</h2>
+            </div>
+            <div v-if="currentRound != 0 && currentRound <= totalRounds">
                 <h2>Current round: {{currentRound}}</h2>
             </div>
-            <h2></h2>
+
+            <!-- start dice rolling to determine first turn -->
             <div v-if="currentRound == 0">
-                <p>Roll dice to see who goes first</p>
+                <h2>Roll dice to see who goes first</h2>
                 <div v-if="p1InitialDice > 0">
-                    <p>Player 1 Rolled: {{p1InitialDice}}</p>
+                    <p>Player 1 rolled: {{p1InitialDice}}</p>
                 </div>
                 <div v-if="p2InitialDice > 0">
-                    <p>Player 2 Rolled: {{p2InitialDice}}</p>
+                    <p>Player 2 rolled: {{p2InitialDice}}</p>
+                </div>
+                <div v-if="p1InitialDice > 0 && p2InitialDice > 0">
+                    <div v-if="p1InitialDice > p2InitialDice">
+                        <p>Player 1 goes first.</p>
+                        <button v-on:click="startRound">Start round 1</button>
+                    </div>
+                    <div v-else-if="p2InitialDice > p1InitialDice">
+                        <p>Player 2 goes first</p>
+                        <button v-on:click="startRound">Start round 1</button>
+                    </div>
+                    <div v-else-if="p2InitialDice == p1InitialDice">
+                        <p>Dice tied, roll again.</p>
+                        <button v-on:click="resetInitialDice">Reset dice</button>
+                    </div>
                 </div>
                 <div v-if="p1InitialDice == 0">
-                    <button>Player 1 Roll the Dice</button>
+                    <button v-on:click="p1InitialDice = Math.floor(Math.random() * 6 + 1)">Player 1 Roll the
+                        Dice</button>
                 </div>
                 <br>
                 <div v-if="p2InitialDice == 0">
-                    <button>Player 2 Roll the Dice</button>
+                    <button v-on:click="p2InitialDice = Math.floor(Math.random() * 6 + 1)">Player 2 Roll the
+                        Dice</button>
+                </div>
+            </div>
+
+            <!-- main gameplay section -->
+            <div v-if="currentRound != 0 && currentRound <= totalRounds">
+                <h3>Player 1 Rounds Won: {{p1TotalScore}}</h3>
+                <h3>Player 2 Rounds Won: {{p2TotalScore}}</h3>
+                <h4>Player 1 Current Round Score: {{p1RoundScore}}</h4>
+                <h4>Player 2 Current Round Score: {{p2RoundScore}}</h4>
+                <br>
+                <div v-if="p1RoundState == true">
+                    <!-- player 1 turn loop -->
+                    <div v-if="currentDiceRolled < 3">
+                        <h2>Player 1's turn</h2>
+                        <button v-on:click="roll">Roll the dice</button>
+                        <div v-if="currentDiceRolled > 0">
+                            <p>Player 1 current score: {{p1RoundScore}}</p>
+                            <p>Player 1 rolled: </p>
+                            <ol>
+                                <li>{{dice1}}</li>
+                                <div v-if="currentDiceRolled < 3">
+                                    <li>{{dice2}}</li>
+                                </div>
+                                <div v-if="currentDiceRolled < 2">
+                                    <li>{{dice3}}</li>
+                                </div>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- player 1 turn end -->
+                    <div v-if="currentDiceRolled == 3">
+                        <p>Player 1 rolled: </p>
+                        <ol>
+                            <li>{{dice1}}</li>
+                        </ol>
+                        <h2>Player 1 ended turn with a score of {{p1RoundScore}}</h2>
+                        <div v-if="firstPlayer == 1">
+                            <button v-on:click="continueRound">Start Player 2's Turn</button>
+                        </div>
+                        <div v-else-if="firstPlayer == 2">
+                            <div v-if="p1RoundScore > p2RoundScore">
+                                <h2>Player 1 won the round</h2>
+                            </div>
+                            <div v-if="p1RoundScore < p2RoundScore">
+                                <h2>Player 2 won the round</h2>
+                            </div>
+                            <div v-if="p1RoundScore == p2RoundScore">
+                                <h2>Players tied, no points awarded</h2>
+                            </div>
+                            <button v-on:click="startRound">End current round</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-else-if="p2RoundState == true">
+                    <!-- player 2 turn loop -->
+                    <div v-if="currentDiceRolled < 3">
+                        <h2>Player 2's turn</h2>
+                        <button v-on:click="roll">Roll the dice</button>
+                        <div v-if="currentDiceRolled > 0">
+                            <p>Player 2 current score: {{p2RoundScore}}</p>
+                            <p>Player 2 rolled: </p>
+                            <ol>
+                                <li>{{dice1}}</li>
+                                <div v-if="currentDiceRolled < 3">
+                                    <li>{{dice2}}</li>
+                                </div>
+                                <div v-if="currentDiceRolled < 2">
+                                    <li>{{dice3}}</li>
+                                </div>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- player 2 turn end -->
+                    <div v-if="currentDiceRolled == 3">
+                        <p>Player 2 rolled: </p>
+                        <ol>
+                            <li>{{dice1}}</li>
+                        </ol>
+                        <h2>Player 2 ended turn with a score of {{p2RoundScore}}</h2>
+                        <div v-if="firstPlayer == 2">
+                            <button v-on:click="continueRound">Start Player 1's Turn</button>
+                        </div>
+                        <div v-else-if="firstPlayer == 1">
+                            <div v-if="p1RoundScore > p2RoundScore">
+                                <h2>Player 1 won the round</h2>
+                            </div>
+                            <div v-if="p1RoundScore < p2RoundScore">
+                                <h2>Player 2 won the round</h2>
+                            </div>
+                            <div v-if="p1RoundScore == p2RoundScore">
+                                <h2>Players tied, no points awarded</h2>
+                            </div>
+                            <button v-on:click="startRound">End current round</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- game end -->
+            <div v-if="currentRound > totalRounds">
+                <h2>GAME ENDED</h2>
+                <h3>Player 1 Rounds Won: {{p1TotalScore}} </h3> 
+                <h3>vs</h3>
+                <h3>Player 2 Rounds Won: {{p2TotalScore}}</h3>
+                <div v-if="p1TotalScore > p2TotalScore">
+                    <h2>Player 1 Wins</h2>
+                </div>
+                <div v-else-if="p1TotalScore < p2TotalScore">
+                    <h2>Player 2 Wins</h2>
+                </div>
+                <div v-else-if="p1TotalScore == p2TotalScore">
+                    <h2>Game tied</h2>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- <div class="start_text">
-    <p class="round_text"> Type in how many rounds you want to play </p>
-    <input type="number" class="round_selector" maxlength="3" size="10" min="1">
-    <button type="button" class="start">Start game</button><br><br>
-    </div>
-    <div class="first_pick hidden">
-      <p> Roll the dice to see who goes first! Higher number goes first. If there is a tie, reroll. </p>
-      <button type="button" class="first_dice"> Roll the dice! </button>
-      <p class="p1_dice">Player 1 Dice: </p>
-      <p class="p2_dice">Player 2 Dice: </p>
-      <p class="goes_first"></p>
-      <button type="button" class="accept hidden">Start playing!</button>
-    </div>
-    <div class="game hidden"> 
-      <h3>Total Score</h3>
-      <p class="p1_score">Player 1 rounds won: </p>
-      <p class="p2_score">Player 2 rounds won: </p>
-      <br>
-      <h3 class="round_num">Current round: </h3>
-      <p class="p1_current">Player 1 current round score: </p>
-      <p class="p2_current">Player 2 current round score: </p>
-      <br>
-      <h3 class="whose_turn"></h3>
-      <button class="roll_dice">Roll dice!</button>
-      <p class="current_dice"> You rolled: </p>
-      <p class="current_score"> Current round score: </p>
-      <br>
-      <button class="next_player hidden">Next player's turn</button>
-      <p class="roundWinner hidden"></p>
-      <button class="next_round hidden">End round</button>
-    </div>
-    <h3 class="finalWinner hidden"></h3> -->
     <script type="module" src="main.js"></script>
 </body>
+
 </html>
